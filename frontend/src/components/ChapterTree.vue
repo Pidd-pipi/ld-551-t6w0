@@ -11,7 +11,10 @@
     <template #default="{ data }">
       <span class="tree-node">
         <span>{{ data.label }}</span>
-        <el-tag v-if="data.lesson?.is_free" size="small">试看</el-tag>
+        <span class="tree-tags">
+          <el-tag v-if="data.lesson && notedSet.has(data.lesson.id)" size="small" type="warning">笔记</el-tag>
+          <el-tag v-if="data.lesson?.is_free" size="small">试看</el-tag>
+        </span>
       </span>
     </template>
   </el-tree>
@@ -22,8 +25,10 @@ import { computed } from 'vue'
 import type { Chapter } from '@/types/chapter'
 import type { Lesson } from '@/types/lesson'
 
-const props = defineProps<{ chapters: Chapter[] }>()
+const props = withDefaults(defineProps<{ chapters: Chapter[]; notedLessonIds?: number[] }>(), { notedLessonIds: () => [] })
 const emit = defineEmits<{ selectLesson: [lesson: Lesson] }>()
+
+const notedSet = computed(() => new Set(props.notedLessonIds))
 
 const treeData = computed(() =>
   props.chapters.map((chapter) => ({
@@ -58,5 +63,10 @@ function handleClick(data: { lesson?: Lesson }) {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+}
+
+.tree-tags {
+  display: inline-flex;
+  gap: 4px;
 }
 </style>

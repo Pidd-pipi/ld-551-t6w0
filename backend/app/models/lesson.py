@@ -19,3 +19,4 @@ class Lesson(Base):
 
     chapter = relationship("Chapter", back_populates="lessons")
     progress_records = relationship("LessonProgress", back_populates="lesson")
+    notes = relationship("LessonNote", back_populates="lesson", cascade="all, delete-orphan")

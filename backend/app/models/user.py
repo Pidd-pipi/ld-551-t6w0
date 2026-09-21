@@ -18,3 +18,4 @@ class User(Base):
     courses = relationship("Course", back_populates="instructor")
     enrollments = relationship("Enrollment", back_populates="user", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")
+    notes = relationship("LessonNote", back_populates="user", cascade="all, delete-orphan")
