@@ -5,7 +5,9 @@ from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models.user import User
 from app.schemas.enrollment import EnrollmentResponse, LessonProgressCreate, ProgressResponse
+from app.schemas.note import NoteMarkersResponse
 from app.services.enrollment_service import EnrollmentService
+from app.services.note_service import NoteService
 
 router = APIRouter(prefix="/enrollments", tags=["enrollments"])
 
@@ -18,6 +20,12 @@ def list_enrollments(user: User = Depends(get_current_user), db: Session = Depen
 @router.get("/recent", response_model=list[EnrollmentResponse])
 def recent(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return EnrollmentService.list_user_enrollments(db, user)[:5]
+
+
+@router.get("/{course_id}/note-markers", response_model=NoteMarkersResponse)
+def get_note_markers(course_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    lesson_ids = NoteService.list_noted_lesson_ids(db, user, course_id)
+    return NoteMarkersResponse(lesson_ids=lesson_ids)
 
 
 @router.get("/{course_id}/progress", response_model=ProgressResponse)

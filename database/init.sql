@@ -68,6 +68,17 @@ CREATE TABLE IF NOT EXISTS lesson_progress (
   CONSTRAINT uq_progress_enrollment_lesson UNIQUE (enrollment_id, lesson_id)
 );
 
+CREATE TABLE IF NOT EXISTS lesson_notes (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+  content TEXT NOT NULL DEFAULT '',
+  version INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_note_user_lesson UNIQUE (user_id, lesson_id)
+);
+
 CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
   order_no VARCHAR(64) UNIQUE NOT NULL,
@@ -96,3 +107,4 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE INDEX IF NOT EXISTS idx_courses_public_search ON courses(status, category, level, created_at);
 CREATE INDEX IF NOT EXISTS idx_lessons_chapter ON lessons(chapter_id, sort_order);
 CREATE INDEX IF NOT EXISTS idx_orders_user_status ON orders(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_lesson_notes_user_course ON lesson_notes(user_id, lesson_id);

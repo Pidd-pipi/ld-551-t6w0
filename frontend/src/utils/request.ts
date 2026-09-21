@@ -29,6 +29,8 @@ request.interceptors.response.use(
       ElMessage.error('无权限访问')
     } else if (status === 404) {
       ElMessage.error('资源不存在')
+    } else if (status === 409) {
+      // 版本冲突由调用方读取 detail 后自行提示，不做全局弹窗
     } else if (status >= 500) {
       ElMessage.error('服务器错误，请稍后重试')
     } else {

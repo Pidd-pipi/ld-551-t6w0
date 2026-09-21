@@ -10,8 +10,13 @@
   >
     <template #default="{ data }">
       <span class="tree-node">
-        <span>{{ data.label }}</span>
-        <el-tag v-if="data.lesson?.is_free" size="small">试看</el-tag>
+        <span class="node-label">
+          <el-icon v-if="data.lesson && notedLessonIds.includes(data.lesson.id)" class="note-icon" title="本课时有笔记">
+            <EditPen />
+          </el-icon>
+          <span>{{ data.label }}</span>
+        </span>
+        <el-tag v-if="data.lesson?.is_free" size="small" type="warning">试看</el-tag>
       </span>
     </template>
   </el-tree>
@@ -19,10 +24,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { EditPen } from '@element-plus/icons-vue'
 import type { Chapter } from '@/types/chapter'
 import type { Lesson } from '@/types/lesson'
 
-const props = defineProps<{ chapters: Chapter[] }>()
+const props = withDefaults(defineProps<{ chapters: Chapter[]; notedLessonIds?: number[] }>(), {
+  notedLessonIds: () => []
+})
 const emit = defineEmits<{ selectLesson: [lesson: Lesson] }>()
 
 const treeData = computed(() =>
@@ -58,5 +66,15 @@ function handleClick(data: { lesson?: Lesson }) {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+}
+
+.node-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.note-icon {
+  color: #2563eb;
 }
 </style>

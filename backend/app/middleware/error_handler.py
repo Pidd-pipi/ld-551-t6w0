@@ -7,6 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.constants.enums import CourseStatus, OrderStatus, UserRole
 from app.exceptions.auth import AuthException, PermissionDeniedException
 from app.exceptions.course import CourseNotFoundException, CoursePermissionException
+from app.exceptions.note import NoteAccessException, NoteConflictException
 from app.exceptions.payment import InvalidOrderTransitionException, PaymentFailedException
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,13 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             return JSONResponse(status_code=403, content={"code": 403, "message": exc.message, "detail": None})
         except CourseNotFoundException as exc:
             return JSONResponse(status_code=404, content={"code": 404, "message": exc.message, "detail": None})
+        except NoteAccessException as exc:
+            return JSONResponse(status_code=403, content={"code": 403, "message": exc.message, "detail": None})
+        except NoteConflictException as exc:
+            return JSONResponse(
+                status_code=409,
+                content={"code": 409, "message": exc.message, "detail": {"version": exc.version, "content": exc.content}},
+            )
         except (PaymentFailedException, InvalidOrderTransitionException) as exc:
             return JSONResponse(status_code=400, content={"code": 400, "message": exc.message, "detail": None})
         except Exception as exc:

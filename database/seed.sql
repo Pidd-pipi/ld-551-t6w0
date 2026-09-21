@@ -30,9 +30,14 @@ INSERT INTO lesson_progress (id, enrollment_id, lesson_id, score) VALUES
   (1, 1, 1, NULL)
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO lesson_notes (id, user_id, lesson_id, content, version) VALUES
+  (1, 3, 1, '课程导学笔记：先通读学习路线，再按章节顺序推进。', 1)
+ON CONFLICT (id) DO NOTHING;
+
 SELECT setval('users_id_seq', 10, true);
 SELECT setval('courses_id_seq', 10, true);
 SELECT setval('chapters_id_seq', 10, true);
 SELECT setval('lessons_id_seq', 10, true);
 SELECT setval('enrollments_id_seq', 10, true);
 SELECT setval('lesson_progress_id_seq', 10, true);
+SELECT setval('lesson_notes_id_seq', 10, true);
